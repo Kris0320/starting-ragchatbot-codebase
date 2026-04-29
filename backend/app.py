@@ -34,6 +34,10 @@ rag_system = RAGSystem(config)
 
 
 # Pydantic models for request/response
+class SourceItem(BaseModel):
+    label: str
+    url: Optional[str] = None
+
 class QueryRequest(BaseModel):
     """Request model for course queries"""
 
@@ -45,7 +49,7 @@ class QueryResponse(BaseModel):
     """Response model for course queries"""
 
     answer: str
-    sources: List[str]
+    sources: List[SourceItem]
     session_id: str
 
 
@@ -87,6 +91,13 @@ async def get_course_stats():
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/session/{session_id}")
+async def clear_session(session_id: str):
+    """Clear conversation history for a session"""
+    rag_system.session_manager.clear_session(session_id)
+    return {"status": "cleared", "session_id": session_id}
 
 
 @app.on_event("startup")

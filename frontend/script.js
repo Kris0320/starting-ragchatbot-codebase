@@ -3,6 +3,8 @@ const API_URL = '/api';
 
 // Global state
 let currentSessionId = null;
+let sessions = [];
+let sessionCounter = 0;
 
 // DOM elements
 let chatMessages, chatInput, sendButton, totalCourses, courseTitles;
@@ -53,6 +55,12 @@ function setupEventListeners() {
     });
     
     
+    // New chat button
+    document.getElementById('new-chat-btn').addEventListener('click', () => {
+        saveCurrentSession();
+        createNewSession();
+    });
+
     // Suggested questions
     document.querySelectorAll('.suggested-item').forEach(button => {
         button.addEventListener('click', (e) => {
@@ -145,10 +153,15 @@ function addMessage(content, type, sources = null, isWelcome = false) {
     let html = `<div class="message-content">${displayContent}</div>`;
     
     if (sources && sources.length > 0) {
+        const sourceLinks = sources.map(s =>
+            s.url
+                ? `<a href="${s.url}" target="_blank" rel="noopener noreferrer">${s.label}</a>`
+                : `<div>${s.label}</div>`
+        ).join('');
         html += `
             <details class="sources-collapsible">
                 <summary class="sources-header">Sources</summary>
-                <div class="sources-content">${sources.join(', ')}</div>
+                <div class="sources-content">${sourceLinks}</div>
             </details>
         `;
     }
@@ -173,6 +186,38 @@ async function createNewSession() {
     currentSessionId = null;
     chatMessages.innerHTML = '';
     addMessage('Welcome to the Course Materials Assistant! I can help you with questions about courses, lessons and specific content. What would you like to know?', 'assistant', null, true);
+}
+
+function saveCurrentSession() {
+    if (!currentSessionId || chatMessages.children.length <= 1) return;
+    const existing = sessions.find(s => s.id === currentSessionId);
+    if (existing) {
+        existing.messagesHtml = chatMessages.innerHTML;
+    } else {
+        sessionCounter++;
+        sessions.push({ id: currentSessionId, label: `CHAT ${sessionCounter}`, messagesHtml: chatMessages.innerHTML });
+    }
+    renderSessionsList();
+}
+
+function renderSessionsList() {
+    const list = document.getElementById('sessions-list');
+    list.innerHTML = sessions.map((s, i) =>
+        `<button class="session-item${s.id === currentSessionId ? ' active' : ''}" data-index="${i}">${s.label}</button>`
+    ).join('');
+    list.querySelectorAll('.session-item').forEach(btn => {
+        btn.addEventListener('click', () => switchToSession(parseInt(btn.dataset.index)));
+    });
+}
+
+function switchToSession(index) {
+    if (sessions[index].id === currentSessionId) return;
+    saveCurrentSession();
+    const session = sessions[index];
+    currentSessionId = session.id;
+    chatMessages.innerHTML = session.messagesHtml;
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    renderSessionsList();
 }
 
 // Load course statistics

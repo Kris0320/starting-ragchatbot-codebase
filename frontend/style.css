@@ -243,16 +243,35 @@ header h1 {
 
 /* Collapsible Sources */
 .sources-collapsible {
-    margin-top: 0.5rem;
+    margin-top: 0.6rem;
     font-size: 0.75rem;
-    color: var(--text-secondary);
 }
 
 .sources-collapsible summary {
     cursor: pointer;
     padding: 0.25rem 0.5rem;
     user-select: none;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.15s ease;
+}
+
+.sources-collapsible summary::before {
+    content: '▶';
+    font-size: 0.55rem;
+    transition: transform 0.2s ease;
+    opacity: 0.6;
+}
+
+.sources-collapsible[open] summary::before {
+    transform: rotate(90deg);
 }
 
 .sources-collapsible summary:hover {
@@ -260,12 +279,59 @@ header h1 {
 }
 
 .sources-collapsible[open] summary {
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
 }
 
 .sources-content {
-    padding: 0 0.5rem 0.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0 0.25rem 0.25rem 0.5rem;
+}
+
+.sources-content a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0.65rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-left: 2px solid var(--primary-color);
+    border-radius: 6px;
     color: var(--text-secondary);
+    text-decoration: none;
+    line-height: 1.4;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.sources-content a::after {
+    content: '↗';
+    font-size: 0.65rem;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+    opacity: 0.3;
+    transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.sources-content a:hover {
+    background: rgba(37, 99, 235, 0.1);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.sources-content a:hover::after {
+    opacity: 1;
+    color: var(--primary-color);
+}
+
+.sources-content div {
+    padding: 0.4rem 0.65rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid transparent;
+    border-left: 2px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    line-height: 1.4;
 }
 
 /* Markdown formatting styles */
@@ -512,6 +578,70 @@ header h1 {
 details[open] .stats-header::before,
 details[open] .suggested-header::before {
     transform: rotate(90deg);
+}
+
+/* New Chat Button */
+.new-chat-btn {
+    display: block;
+    width: 100%;
+    background: var(--background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.new-chat-btn:hover {
+    background: var(--surface-hover);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateX(2px);
+}
+
+.new-chat-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+/* Sessions List */
+.sessions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.session-item {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 4px;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.session-item:hover {
+    color: var(--primary-color);
+    background: rgba(37, 99, 235, 0.07);
+}
+
+.session-item.active {
+    color: var(--primary-color);
+    background: rgba(37, 99, 235, 0.1);
 }
 
 /* Course Stats in Sidebar */
